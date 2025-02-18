@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>CSGO开盲盒</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 50px;
+        }
+ 
+        .box-container {
+            perspective: 1000px;
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+        }
+ 
+        .box {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-out;
+        }
+ 
+        .box-front {
+            background-image: url('https://static.hdslb.com/images/box/csgo_box.png');
+            background-size: cover;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+ 
+        .box-back {
+            background-image: url('https://static.hdslb.com/images/box/csgo_box_open.png');
+            background-size: cover;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+        }
+ 
+        .open-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+ 
+        .open-button:hover {
+            background-color: #45a049;
+        }
+ 
+        .result {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+            display: none;
+        }
+ 
+        @keyframes pop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+ 
+        .result-popup {
+            animation: pop 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSGO开盲盒</h1>
+    
+    <div class="box-container">
+        <div class="box" id="box">
+            <div class="box-front"></div>
+            <div class="box-back"></div>
+        </div>
+    </div>
+ 
+    <button class="open-button" id="openBtn">开盲盒！</button>
+ 
+    <div class="result" id="result">
+        恭喜您获得： <span id="prize"></span>
+    </div>
+ 
+    <script>
+        const box = document.getElementById('box');
+        const openBtn = document.getElementById('openBtn');
+        const result = document.getElementById('result');
+        const prize = document.getElementById('prize');
+ 
+        // 奖励列表 
+        const rewards = [
+            "AK-47 | 热力打击",
+            "M4A4 | Zirka",
+            "AWP | 亚洲龙",
+            "UMP-45 | 希望之光",
+            "Glock-18 | 元素",
+            "SSG 08 | 赤红之刃",
+            "MAC-10 | 龙纹",
+            "PP-Bizon | 烈焰",
+            "SCAR-L | 冰晶",
+            "P250 | 黄金"
+        ];
+ 
+        // 随机获取奖励 
+        function getRandomReward() {
+            return rewards[Math.floor(Math.random() * rewards.length)];
+        }
+ 
+        // 打开盲盒动画 
+        function openBox() {
+            box.style.transform = 'rotateY(180deg)';
+            
+            setTimeout(() => {
+                const reward = getRandomReward();
+                prize.textContent = reward;
+                result.classList.add('result-popup');
+                result.style.display = 'block';
+                
+                // 添加音效 
+                const audio = new Audio('https://static.hdslb.com/sounds/open_box.mp3');
+                audio.play();
+                
+                // 重置按钮状态 
+                setTimeout(() => {
+                    box.style.transform = 'rotateY(0deg)';
+                    result.style.display = 'none';
+                    result.classList.remove('result-popup');
+                }, 3000);
+                
+                // 禁止重复点击 
+                openBtn.disabled = true;
+                setTimeout(() => {
+                    openBtn.disabled = false;
+                }, 3500);
+            }, 1000);
+        }
+ 
+        openBtn.addEventListener('click', openBox);
+    </script>
+</body>
+</html>
